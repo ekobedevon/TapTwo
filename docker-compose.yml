@@ -1,0 +1,21 @@
+services:
+  map-market:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+  avon-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: '${AUTH_PG_USER}'
+      POSTGRES_PASSWORD: '${AUTH_PG_PASSWORD}'
+      DB_NAME: '${DB_NAME}'
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./Scripts:/docker-entrypoint-initdb.d
+      - avon-db-data:/var/lib/postgresql
+
+volumes:
+  avon-db-data:
