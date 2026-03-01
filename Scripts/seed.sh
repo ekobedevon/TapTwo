@@ -40,6 +40,37 @@ CREATE TABLE email_verification_request (
     expires_at TIMESTAMPTZ NOT NULL
 );
 
+CREATE TABLE tournament (
+    id TEXT PRIMARY KEY,
+    organizer_id TEXT NOT NULL REFERENCES auth_user(id),
+    location TEXT NOT NULL,
+    description TEXT NOT NULL,
+    game TEXT NOT NULL,
+    format TEXT NOT NULL,
+    date TIMESTAMP NOT NULL,
+    rounds INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE match (
+    id TEXT PRIMARY KEY,
+    tournament_id TEXT NOT NULL REFERENCES tournament(id),
+    a_id TEXT NOT NULL REFERENCES auth_user(id),
+    b_id TEXT NOT NULL REFERENCES auth_user(id),
+    game TEXT NOT NULL,
+    format TEXT NOT NULL,
+    date TIMESTAMP NOT NULL,
+    a_score INTEGER NOT NULL DEFAULT 0,
+    b_score INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE entry (
+    id SERIAL PRIMARY KEY,
+    tournament_id TEXT NOT NULL REFERENCES tournament(id),
+    user_id TEXT NOT NULL REFERENCES auth_user(id)
+);
+
+
+
 EOSQL
 
 if [ $? -eq 0 ]; then
