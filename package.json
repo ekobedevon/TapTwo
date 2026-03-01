@@ -11,7 +11,11 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"db": "sudo docker compose up avon-db",
+		"d-b": "sudo docker-compose up avon-db",
+		"down": "sudo docker compose down -v",
+		"db_codegen": "npx kysely-codegen --out-file ./src/lib/db.d.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.2",
@@ -23,6 +27,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^24",
+		"@types/pg": "^8.16.0",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
@@ -36,5 +41,16 @@
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.54.0",
 		"vite": "^7.3.1"
+	},
+	"dependencies": {
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"argon2": "^0.44.0",
+		"kysely": "^0.28.11",
+		"kysely-codegen": "^0.20.0",
+		"nanoid": "^5.1.6",
+		"pg": "^8.19.0",
+		"random-words": "^2.0.1",
+		"svelte-sonner": "^1.0.7"
 	}
 }

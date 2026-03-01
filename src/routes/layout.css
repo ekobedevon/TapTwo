@@ -1,3 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..1000&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+html,
+body,
+label {
+	font-family: 'Roboto', sans-serif;
+}
+
+@theme {
+	--color-text: #0e1316;
+	--color-background: #f8fbfc;
+	--color-primary: #4193c3;
+	--color-secondary: #aac6d5;
+	--color-accent: #7dacca;
+	--color-text_dark: #e9eef1;
+	--color-background_dark: #030607;
+	--color-primary_dark: #3c8ebe;
+	--color-secondary_dark: #2a4655;
+	--color-accent_dark: #356582;
+}

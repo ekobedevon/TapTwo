@@ -32,6 +32,13 @@ CREATE TABLE user_session (
     expires_at TIMESTAMPTZ NOT NULL
 );
 
+CREATE TABLE email_verification_request (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    code TEXT NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL
+);
 
 EOSQL
 
