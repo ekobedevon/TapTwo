@@ -11,6 +11,8 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export type TournamentStatus = "Complete" | "Running" | "Set" | "TBD";
+
 export interface AuthUser {
   email: string;
   email_verified: Generated<boolean>;
@@ -28,6 +30,37 @@ export interface EmailVerificationRequest {
   user_id: string;
 }
 
+export interface Entry {
+  id: Generated<number>;
+  tournament_id: string;
+  user_id: string;
+}
+
+export interface Match {
+  a_id: string;
+  a_score: Generated<number>;
+  b_id: string;
+  b_score: Generated<number>;
+  date: Timestamp;
+  format: string;
+  game: string;
+  id: string;
+  tournament_id: string;
+}
+
+export interface Tournament {
+  date: Timestamp;
+  description: string;
+  format: string;
+  game: string;
+  id: string;
+  location: string;
+  organizer_id: string;
+  rounds: Generated<number>;
+  status: Generated<TournamentStatus>;
+  title: string;
+}
+
 export interface UserSession {
   expires_at: Timestamp;
   id: string;
@@ -37,5 +70,8 @@ export interface UserSession {
 export interface DB {
   auth_user: AuthUser;
   email_verification_request: EmailVerificationRequest;
+  entry: Entry;
+  match: Match;
+  tournament: Tournament;
   user_session: UserSession;
 }
