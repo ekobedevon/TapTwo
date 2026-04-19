@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { db } from 'db';
 
 export const load: PageServerLoad = async (event) => {
-	if (event.locals.user) redirect(302, '/');
+	if (!event.locals.user) redirect(302, '/');
 };
 export const actions: Actions = {
 	default: async (event) => {
@@ -27,8 +27,17 @@ export const actions: Actions = {
 			date: new Date()
 		};
 
-		const response = await db.insertInto('tournament').values(newTourney).execute();
+		const response = await db
+			.insertInto('tournament')
+			.values(newTourney)
+			.returning('id')
+			.executeTakeFirst();
+		console.log("RESPONSE")
+		console.log(response)
 		// setSessionTokenCookie(event, token, session.expires_at);
-		redirect(302, '/');
+		// if (response?.id) {
+		// 	return redirect(302, `/tournament/view/${response?.id}`);
+		// }
+		// return Promise.reject(new Error('Failed to create tournament'));
 	}
 };
