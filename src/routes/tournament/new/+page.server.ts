@@ -32,12 +32,12 @@ export const actions: Actions = {
 			.values(newTourney)
 			.returning('id')
 			.executeTakeFirst();
-		console.log("RESPONSE")
-		console.log(response)
+		console.log('RESPONSE');
+		console.log(response);
 		// setSessionTokenCookie(event, token, session.expires_at);
-		// if (response?.id) {
-		// 	return redirect(302, `/tournament/view/${response?.id}`);
-		// }
-		// return Promise.reject(new Error('Failed to create tournament'));
+		if (response?.id) {
+			return redirect(302, `/tournament/view/${response?.id}`);
+		}
+		return Promise.reject(new Error('Failed to create tournament'));
 	}
 };

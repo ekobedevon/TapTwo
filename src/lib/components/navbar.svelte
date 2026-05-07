@@ -84,8 +84,8 @@
 			<div class="flex items-center gap-4">
 				{#if user}
 					<div class="shrink-0">
-						<button
-							type="button"
+						<a
+							href="/tournament/new"
 							class="relative inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 						>
 							<svg
@@ -104,7 +104,7 @@
 							</svg>
 
 							New Tournament
-						</button>
+						</a>
 					</div>
 					<div class="hidden md:ml-4 md:flex md:shrink-0 md:items-center">
 						<!-- Profile dropdown -->

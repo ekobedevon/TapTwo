@@ -11,7 +11,7 @@
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <div class="w-full flex flex-col items-center">
 	<Navbar {user}></Navbar>
-	<div class="flex-1 max-w-350">
+	<div class="w-full flex-1 max-w-350">
 		{@render children()}
 	</div>
 </div>
