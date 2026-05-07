@@ -6,7 +6,7 @@
 	let current = 'Home';
 	let options = [
 		{ title: 'Home', path: '/' },
-		{ title: 'Tournaments', path: '/' },
+		{ title: 'Tournaments', path: '/tournament/browse' },
 		{ title: 'Dashboard', path: '/' }
 	];
 </script>

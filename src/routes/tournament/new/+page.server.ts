@@ -36,7 +36,7 @@ export const actions: Actions = {
 		console.log(response);
 		// setSessionTokenCookie(event, token, session.expires_at);
 		if (response?.id) {
-			return redirect(302, `/tournament/view/${response?.id}`);
+			return redirect(302, `/tournament/manage/${response?.id}`);
 		}
 		return Promise.reject(new Error('Failed to create tournament'));
 	}
