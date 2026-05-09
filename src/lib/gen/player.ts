@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { PostgresDialect, Kysely, type SelectType, type Insertable } from 'kysely';
 import pg from 'pg';
 import type { AuthUser, DB } from 'lib/db';
-import { nanoid } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 
 // Load env file
 const __filename = fileURLToPath(import.meta.url);
@@ -33,9 +33,13 @@ export const gen_db = new Kysely<DB>({
 console.log('making new users');
 let newUsers: Insertable<AuthUser>[] = [];
 
+const alphabet = '1234567890ABCDEFGHIJKLMNOPQRZTUV';
+const nanoid = customAlphabet(alphabet, 10);
+
 for (let index = 0; index < 10; index++) {
 	const hashed_password = await argon2.hash('password');
-	const id = nanoid(10);
+
+	const id = nanoid();
 	const newUser: Insertable<AuthUser> = {
 		email: `${id}@taptwo.com`,
 		email_verified: true,

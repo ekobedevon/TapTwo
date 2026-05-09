@@ -12,11 +12,18 @@ export const load: PageServerLoad = async (event) => {
 		.selectFrom('tournament')
 		.selectAll()
 		.where('id', '=', tournamentID)
+		.executeTakeFirstOrThrow();
+
+	const players = await db
+		.selectFrom('entry')
+		.innerJoin('auth_user', 'auth_user.id', 'entry.user_id')
+		.select(['auth_user.id', 'auth_user.username'])
 		.execute();
 
 	return {
-		tournament
-	}
+		tournament,
+		players
+	};
 };
 // export const actions: Actions = {
 // 	default: async (event) => {

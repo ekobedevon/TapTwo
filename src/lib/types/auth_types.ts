@@ -23,3 +23,8 @@ export interface EmailVerificationRequest {
 	code: string;
 	expires_at: Date;
 }
+
+export interface player {
+	id: string;
+	username: string;
+}
