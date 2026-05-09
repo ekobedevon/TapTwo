@@ -1,9 +1,14 @@
 <script lang="ts">
 	import type { player } from 'lib/types/auth_types';
 	import { toast } from 'svelte-sonner';
-	export let tournamentID: string = '';
-	export let players: player[] = [];
-	let userID: string = '';
+	import Modal from 'components/modals/modal.svelte';
+
+	let showModal: boolean = $state(false);
+
+	let { tournamentID, players }: { tournamentID: string; players: player[] } = $props();
+
+	let userID: string = $state('');
+	let entries = $state(players);
 
 	const add_player = async () => {
 		try {
@@ -31,15 +36,14 @@
 			if (!response.ok) {
 				toast.error('Issue refreshing page, please try again in a moment.');
 			} else {
-				console.log("SUCCESS")
+				const data = await response.json();
+				entries = data.entries;
 				toast.success('Roster Refreshed');
 			}
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	};
-
-	
 </script>
 
 <div class="flex flex-col gap-3">
@@ -49,7 +53,7 @@
 </div>
 <div class="">
 	<button onclick={refreshPlayerRoster}>Refresh</button>
-	{#each players as player}
+	{#each entries as player}
 		<div class="">
 			<p>{player.username}</p>
 		</div>
