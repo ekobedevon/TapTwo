@@ -19,7 +19,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 	if (tournament) {
 		const response = await db
 			.insertInto('entry')
-			.values({ tournament_id: tournamentID, user_id: userID })
+			.values({ tournament: tournamentID, player: userID })
 			.returningAll()
 			.executeTakeFirst();
 		if (!response) {

@@ -9,6 +9,8 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export type MatchStatus = "LOSE" | "TIE" | "WIN";
+
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type TournamentStatus = "Complete" | "Running" | "Set" | "TBD";
@@ -31,21 +33,24 @@ export interface EmailVerificationRequest {
 }
 
 export interface Entry {
-  id: Generated<number>;
-  tournament_id: string;
-  user_id: string;
+  player: string;
+  tournament: string;
 }
 
-export interface Match {
-  a_id: string;
-  a_score: Generated<number>;
-  b_id: string;
-  b_score: Generated<number>;
+export interface Matches {
+  a: string;
+  b: string;
   date: Timestamp;
-  format: string;
-  game: string;
   id: string;
   tournament_id: string;
+}
+
+export interface Results {
+  final: Generated<MatchStatus>;
+  id: string;
+  match: string;
+  player: string;
+  score: Generated<number>;
 }
 
 export interface Tournament {
@@ -71,7 +76,8 @@ export interface DB {
   auth_user: AuthUser;
   email_verification_request: EmailVerificationRequest;
   entry: Entry;
-  match: Match;
+  matches: Matches;
+  results: Results;
   tournament: Tournament;
   user_session: UserSession;
 }
