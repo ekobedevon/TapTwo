@@ -33,7 +33,7 @@ export const gen_db = new Kysely<DB>({
 console.log('making new users');
 let newUsers: Insertable<AuthUser>[] = [];
 
-const alphabet = '1234567890ABCDEFGHIJKLMNOPQRZTUV';
+const alphabet = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nanoid = customAlphabet(alphabet, 10);
 
 for (let index = 0; index < 10; index++) {

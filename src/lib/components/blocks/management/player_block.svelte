@@ -44,6 +44,26 @@
 			console.error('Error:', error);
 		}
 	};
+
+	const removePlayer = async (userID:string) => {
+		try {
+			const response = await fetch(`/manage/${tournamentID}/remove`, {
+				method: 'Delete',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ userID })
+			});
+			if (!response.ok) {
+				toast.error('Issue refreshing page, please try again in a moment.');
+			} else {
+				const data = await response.json();
+				toast.success('Player removed');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	};
 </script>
 
 <div class="flex flex-col gap-3">
@@ -54,8 +74,8 @@
 <div class="">
 	<button onclick={refreshPlayerRoster}>Refresh</button>
 	{#each entries as player}
-		<div class="">
-			<p>{player.username}</p>
+		<div class="flex gap-2">
+			<p>{player.username}</p> <button class=" underline" onclick={()=> removePlayer(player.id)}>X</button>
 		</div>
 	{/each}
 </div>
