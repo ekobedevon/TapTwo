@@ -14,6 +14,12 @@ export const load: PageServerLoad = async (event) => {
 		.where('id', '=', tournamentID)
 		.executeTakeFirstOrThrow();
 
+	const organizer = await db
+		.selectFrom('auth_user')
+		.select('auth_user.username')
+		.where('id', '=', tournament.organizer_id)
+		.executeTakeFirstOrThrow();
+
 	const players = await db
 		.selectFrom('entry')
 		.innerJoin('auth_user', 'auth_user.id', 'entry.player')
@@ -23,6 +29,7 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		tournament,
+		organizer: organizer.username,
 		players
 	};
 };

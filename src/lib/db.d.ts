@@ -5,6 +5,8 @@
 
 import type { ColumnType } from "kysely";
 
+export type EntryStatus = "ACTIVE" | "CUT" | "DROP";
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
@@ -35,6 +37,7 @@ export interface EmailVerificationRequest {
 export interface Entry {
   loses: Generated<number>;
   player: string;
+  status: Generated<EntryStatus>;
   ties: Generated<number>;
   tournament: string;
   wins: Generated<number>;

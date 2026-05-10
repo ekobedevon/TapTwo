@@ -85,7 +85,7 @@
 
 <div class="flex flex-col items-center border-2 border-primary p-2">
 	<div class="flex w-72 flex-col gap-3">
-		<button class="border-2" onclick={() => (showAddPlayerModal = true)}>Add</button>
+		<button class="border-2" onclick={() => (showAddPlayerModal = true)}>Add Player by ID</button>
 	</div>
 
 	<div class="m-2 flex w-full max-w-96 flex-col items-center gap-2 border-t-2 border-primary p-2">

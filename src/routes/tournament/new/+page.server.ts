@@ -21,6 +21,7 @@ export const actions: Actions = {
 			format,
 			game,
 			title,
+			rounds: 0,
 			location: '',
 			organizer_id: userId,
 			id: nanoid(),
