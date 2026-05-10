@@ -77,6 +77,9 @@ CREATE TABLE results (
 CREATE TABLE entry (
     tournament TEXT NOT NULL REFERENCES tournament(id),
     player TEXT NOT NULL REFERENCES auth_user(id),
+    wins INTEGER NOT NULL DEFAULT 0,
+    loses INTEGER NOT NULL DEFAULT 0,
+    ties INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (tournament,player)
 );
 

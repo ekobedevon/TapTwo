@@ -20,8 +20,7 @@ export const DELETE = async (event: RequestEvent): Promise<Response> => {
 		.where('id', '=', tournamentID)
 		.where('organizer_id', '=', event.locals.user.id)
 		.selectAll()
-		.executeTakeFirst()
-
+		.executeTakeFirst();
 
 	if (!tournament) {
 		return Promise.resolve(
@@ -31,8 +30,11 @@ export const DELETE = async (event: RequestEvent): Promise<Response> => {
 		);
 	}
 
-
-	const entry = await db.deleteFrom("entry").where("entry.tournament_id","=",tournament.id).where("entry.user_id","=",body.userID).executeTakeFirst()
+	const entry = await db
+		.deleteFrom('entry')
+		.where('entry.tournament', '=', tournament.id)
+		.where('entry.player', '=', body.userID)
+		.executeTakeFirst();
 	// const entries = await db
 	// 	.selectFrom('entry')
 	// 	.innerJoin('auth_user', 'auth_user.id', 'entry.user_id')

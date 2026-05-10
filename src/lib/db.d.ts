@@ -33,8 +33,11 @@ export interface EmailVerificationRequest {
 }
 
 export interface Entry {
+  loses: Generated<number>;
   player: string;
+  ties: Generated<number>;
   tournament: string;
+  wins: Generated<number>;
 }
 
 export interface Matches {

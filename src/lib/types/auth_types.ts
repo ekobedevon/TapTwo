@@ -27,4 +27,7 @@ export interface EmailVerificationRequest {
 export interface player {
 	id: string;
 	username: string;
+	wins: number;
+	loses: number;
+	ties: number;
 }
