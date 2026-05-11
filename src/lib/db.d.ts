@@ -46,8 +46,9 @@ export interface Entry {
 export interface Matches {
   a: string;
   b: string;
-  date: Timestamp;
+  finished: Generated<boolean>;
   id: string;
+  round: Generated<number>;
   tournament_id: string;
 }
 

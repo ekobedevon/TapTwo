@@ -27,9 +27,44 @@ export const load: PageServerLoad = async (event) => {
 		.orderBy('entry.wins', 'asc')
 		.execute();
 
+	const matches = await db
+		.selectFrom('matches')
+		.innerJoin('auth_user as user', 'user.id', 'matches.a')
+		.innerJoin('auth_user as opponent', 'opponent.id', 'matches.b')
+
+		// player A result
+		.innerJoin('results', (join) =>
+			join.onRef('results.match', '=', 'matches.id').onRef('results.player', '=', 'matches.a')
+		)
+
+		// player B result
+		.innerJoin('results as b_results', (join) =>
+			join.onRef('b_results.match', '=', 'matches.id').onRef('b_results.player', '=', 'matches.b')
+		)
+
+		.select([
+			'matches.id',
+			'matches.finished',
+
+			'matches.a',
+			'matches.b',
+
+			'user.username as player_a',
+			'opponent.username as player_b',
+
+			'results.score as player_a_score',
+			'b_results.score as player_b_score'
+		])
+
+		.where('matches.tournament_id', '=', tournamentID)
+		.execute();
+
+	console.log(matches);
+
 	return {
 		tournament,
 		organizer: organizer.username,
+		matches,
 		players
 	};
 };

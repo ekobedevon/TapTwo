@@ -1,6 +1,7 @@
 <script lang="ts">
 	import User from './icons/user.svelte';
-	export let user:any = null;
+	//export let user:any = null;
+	let { user }: { user: any } = $props();
 	let show_profile = false;
 	let show_mobile = false;
 	let current = 'Home';
@@ -20,9 +21,8 @@
 				<div class="mr-2 -ml-2 flex items-center md:hidden">
 					<!-- Mobile menu button -->
 					<button
-						type="button"
-						on:click={() => (show_mobile = !show_mobile)}
-						class="text-body relative inline-flex items-center justify-center rounded-md p-2 hover:bg-accent hover:text-primary focus:outline-2 focus:-outline-offset-1 focus:outline-primary"
+						onclick={() => (show_profile = !show_profile)}
+						class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 					>
 						<span class="absolute -inset-0.5"></span>
 						<span class="sr-only">Open main menu</span>
@@ -110,7 +110,7 @@
 						<!-- Profile dropdown -->
 						<div class="relative ml-3">
 							<button
-								on:click={() => (show_profile = !show_profile)}
+								onclick={() => (show_profile = !show_profile)}
 								// popovertarget="profileDropdown"
 								class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 							>

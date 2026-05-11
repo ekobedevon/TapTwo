@@ -55,7 +55,7 @@ CREATE TABLE tournament (
     game TEXT NOT NULL,
     format TEXT NOT NULL,
     date TIMESTAMP NOT NULL,
-    rounds INTEGER NOT NULL DEFAULT 1,
+    rounds INTEGER NOT NULL DEFAULT 0,
     status tournament_status NOT NULL DEFAULT 'TBD'
 );
 
@@ -64,7 +64,8 @@ CREATE TABLE matches (
     tournament_id TEXT NOT NULL REFERENCES tournament(id),
     a TEXT NOT NULL REFERENCES auth_user(id),
     b TEXT NOT NULL REFERENCES auth_user(id),
-    date TIMESTAMP NOT NULL
+    round INTEGER NOT NULL DEFAULT 1,
+    finished BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE results (

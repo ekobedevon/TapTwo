@@ -8,8 +8,9 @@
 	const {
 		tournament,
 		organizer,
+		matches,
 		players
-	}: { tournament: any; organizer: string; players: player[] } = data;
+	}: { tournament: any; organizer: string; matches: any; players: player[] } = data;
 	const tournamentID = tournament.id;
 	let player_list = $state(players);
 	const options = ['Roster', 'Matchups'];
@@ -20,7 +21,7 @@
 	<div class="flex flex-col items-center">
 		<h1 class="font-bold">{tournament.title}</h1>
 		<h3><span class="pr-1 font-bold">Organizer:</span>{organizer}</h3>
-		<p>Current Round: {tournament.rounds ? tournament.rounds : 'TBD'}</p>
+		<p>Current Round: {tournament.rounds + 1 ? tournament.rounds : 'TBD'}</p>
 	</div>
 	<div class="flex gap-1 py-2">
 		{#each options as option}
@@ -40,7 +41,6 @@
 	{#if current_player_list === 'Roster'}
 		<Player {tournamentID} players={player_list}></Player>
 	{:else if current_player_list === 'Matchups'}
-	<Status></Status>
-		{/if}
-
+		<Status {matches} {tournament}></Status>
+	{/if}
 </div>
