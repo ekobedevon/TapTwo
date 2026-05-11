@@ -52,7 +52,13 @@
 			{#each matches as match}
 				<tr>
 					<td class="text-wrap">{match.player_a}</td>
-					<td class="text-center">{match.player_a_score}-{match.player_b_score}</td>
+					<td class="text-center"
+						>{#if match.player_a === match.player_b}
+							BYE
+						{:else}
+							{match.player_a_score}-{match.player_b_score}
+						{/if}
+					</td>
 					<td class="text-wrap">{match.player_b}</td>
 				</tr>
 			{/each}
