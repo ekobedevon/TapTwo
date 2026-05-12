@@ -9,8 +9,10 @@
 		tournament,
 		organizer,
 		matches,
-		players
-	}: { tournament: any; organizer: string; matches: any; players: player[] } = data;
+		players,
+		active
+	}: { tournament: any; organizer: string; matches: any; players: player[]; active: boolean } =
+		data;
 	const tournamentID = tournament.id;
 	let player_list = $state(players);
 	const options = ['Roster', 'Matchups'];
@@ -41,6 +43,6 @@
 	{#if current_player_list === 'Roster'}
 		<Player {tournamentID} players={player_list}></Player>
 	{:else if current_player_list === 'Matchups'}
-		<Status {matches} {tournament}></Status>
+		<Status {matches} {tournament} {active}></Status>
 	{/if}
 </div>

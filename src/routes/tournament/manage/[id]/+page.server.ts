@@ -57,15 +57,22 @@ export const load: PageServerLoad = async (event) => {
 		])
 
 		.where('matches.tournament_id', '=', tournamentID)
+		.where('matches.round', '=', tournament.rounds)
 		.execute();
 
-	console.log(matches);
+	const activeMatches = await db
+		.selectFrom('matches')
+		.where('matches.tournament_id', '=', tournamentID)
+		.where('matches.round', '=', tournament.rounds)
+		.where('matches.finished', '=', false)
+		.execute();
 
 	return {
 		tournament,
 		organizer: organizer.username,
 		matches,
-		players
+		players,
+		active: activeMatches.length !== 0
 	};
 };
 // export const actions: Actions = {

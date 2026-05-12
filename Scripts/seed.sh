@@ -82,6 +82,7 @@ CREATE TABLE entry (
     wins INTEGER NOT NULL DEFAULT 0,
     loses INTEGER NOT NULL DEFAULT 0,
     ties INTEGER NOT NULL DEFAULT 0,
+    points INTEGER NOT NULL DEFAULT 0,
     status entry_status NOT NULL DEFAULT 'ACTIVE',
     PRIMARY KEY (tournament,player)
 );

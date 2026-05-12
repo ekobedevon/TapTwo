@@ -1,10 +1,13 @@
 <script lang="ts">
 	import Modal from 'components/modals/modal.svelte';
+	import { toast } from 'svelte-sonner';
 
-	let { matches, tournament }: { matches: any; tournament: any } = $props();
+	let { matches, tournament, active }: { matches: any; tournament: any; active: boolean } =
+		$props();
 	let selected_match = $state(matches[0]);
-	let selected_index = $state(0);
 	let showChangeScoreModal = $state(false);
+	let showEndRoundModal = $state(false);
+
 	const newRound = async () => {
 		try {
 			const response = await fetch(`/manage/${tournament.id}/round/start`, {
@@ -17,21 +20,43 @@
 		} catch (error) {
 			console.error('Error:', error);
 		}
+	};
 
-		// try {
-		// 	const response = await fetch(`/manage/${tournamentID}/add`, {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify({ userID })
-		// 	});
-		// 	userID = '';
-		// 	showAddPlayerModal = false;
-		// } catch (error) {
-		// 	toast.error('Player already added');
-		// 	//console.error('Error:', error);
-		// }
+	const endRound = async () => {
+		try {
+			const response = await fetch(`/manage/${tournament.id}/round/status`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({})
+			});
+			if (response.ok) {
+				const { active }: { active: boolean } = await response.json();
+				if (active && showEndRoundModal != true) {
+					showEndRoundModal = true;
+				} else {
+					try {
+						const response = await fetch(`/manage/${tournament.id}/round/end`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({})
+						});
+						if (response.ok) {
+							const { message }: { message: string } = await response.json();
+
+							window.location.reload();
+						}
+					} catch (error) {
+						console.error('Error:', error);
+					}
+				}
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
 	};
 	const ModifyScore = async () => {
 		try {
@@ -50,18 +75,19 @@
 
 	const confirmModifyScore = async (matchIndex: number) => {
 		selected_match = matches[matchIndex];
-		selected_index = matchIndex;
-		console.log(selected_match);
 		showChangeScoreModal = true;
 	};
 </script>
 
-<div class="grid grid-cols-4 gap-2">
+<div class="flex gap-2">
 	<!-- Start will turn into pause once round is started -->
-	<button class="border-2 p-1" onclick={newRound}>Start Round</button>
-	<button class="border-2 p-1">End Round</button>
-	<button class="border-2 p-1">Next Round</button>
-	<button class="border-2 p-1">Cut to Top</button>
+	{#if !active}
+		<button class="border-2 p-1" onclick={newRound}>Start Round</button>
+		<button class="border-2 p-1">Cut to Top</button>
+	{:else}
+		<button class="border-2 p-1" onclick={() => console.log('PAUSE')}>Pause Round</button>
+		<button class="border-2 p-1" onclick={endRound}>End Round</button>
+	{/if}
 </div>
 <div class="pt-2 text-center">
 	<p>Round {tournament.rounds}</p>
@@ -118,4 +144,10 @@
 		</div>
 		<button class="border-2 p-2" onclick={ModifyScore}> Confirm </button>
 	{/if}
+</Modal>
+
+<Modal bind:showModal={showEndRoundModal}>
+	<h1 class="font-bold">Are you sure you want to end the Round?</h1>
+	<h2 class="text-sm">Unreported matches will be marked as Tie.</h2>
+	<button class="border-2 p-2" onclick={endRound}> Confirm </button>
 </Modal>

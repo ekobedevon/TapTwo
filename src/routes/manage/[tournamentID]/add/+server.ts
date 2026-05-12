@@ -29,7 +29,6 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				})
 			);
 		}
-		console.log(response);
 	}
 
 	return Promise.resolve(

@@ -37,6 +37,7 @@ export interface EmailVerificationRequest {
 export interface Entry {
   loses: Generated<number>;
   player: string;
+  points: Generated<number>;
   status: Generated<EntryStatus>;
   ties: Generated<number>;
   tournament: string;
