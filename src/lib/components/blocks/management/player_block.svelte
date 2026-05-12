@@ -16,7 +16,8 @@
 		loses: 0,
 		ties: 0,
 		username: '',
-		id: ''
+		id: '',
+		points: 0
 	};
 	let selected_player: player = $state(sample_player);
 
@@ -33,6 +34,25 @@
 			showAddPlayerModal = false;
 		} catch (error) {
 			toast.error('Player already added');
+			//console.error('Error:', error);
+		}
+	};
+
+	const calculateScores = async () => {
+		try {
+			const response = await fetch(`/manage/${tournamentID}/tabulate`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({})
+			});
+			if (response.ok) {
+				const { message } = await response.json();
+				toast.success(message);
+			}
+		} catch (error) {
+			toast.error('Error during retabulation');
 			//console.error('Error:', error);
 		}
 	};
@@ -86,16 +106,18 @@
 <div class="flex flex-col items-center border-2 border-primary p-2">
 	<div class="flex w-72 flex-col gap-3">
 		<button class="border-2" onclick={() => (showAddPlayerModal = true)}>Add Player by ID</button>
+		<button class="border-2" onclick={calculateScores}>Recalculate Standings</button>
 	</div>
 
 	<div class="m-2 flex w-full max-w-96 flex-col items-center gap-2 border-t-2 border-primary p-2">
 		<button onclick={refreshPlayerRoster}>Refresh</button>
 		<h1 class="underline">Tournament Roster</h1>
-		<table class="w-full table-fixed text-left">
+		<table class="w-full table-fixed text-left text-sm">
 			<thead class="">
 				<tr class="">
-					<th class="">Player</th>
+					<th class="w-1/3">Player</th>
 					<th class="text-center">W-L-D</th>
+					<th class="text-center">Points</th>
 					<th class="text-center">Remove</th>
 				</tr>
 			</thead>
@@ -104,6 +126,7 @@
 					<tr>
 						<td>{player.username}</td>
 						<td class="text-center">{player.wins}-{player.loses}-{player.ties}</td>
+						<td class="text-center">{player.points}</td>
 						<td class="text-center">
 							<button
 								class="text-red-600 hover:font-bold hover:underline"

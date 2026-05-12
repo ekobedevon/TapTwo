@@ -30,4 +30,5 @@ export interface player {
 	wins: number;
 	loses: number;
 	ties: number;
+	points: number;
 }

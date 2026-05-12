@@ -16,7 +16,7 @@
 	const tournamentID = tournament.id;
 	let player_list = $state(players);
 	const options = ['Roster', 'Matchups'];
-	let current_player_list = $state(options[1]);
+	let current_player_list = $state(options[0]);
 </script>
 
 <div class="flex w-full flex-col items-center justify-center">
