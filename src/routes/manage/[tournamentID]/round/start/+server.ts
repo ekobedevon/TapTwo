@@ -63,12 +63,12 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				results.push(
 					{
 						player: a,
-						final: 'TIE',
+						final: 'DRAW',
 						match: match_id,
 						score: 0,
 						id: nanoid()
 					},
-					{ player: b, final: 'TIE', match: match_id, score: 0, id: nanoid() }
+					{ player: b, final: 'DRAW', match: match_id, score: 0, id: nanoid() }
 				);
 			}
 

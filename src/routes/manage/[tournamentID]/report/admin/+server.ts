@@ -46,12 +46,12 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 
 		if (selected_match.player_a_score === selected_match.player_b_score) {
 			const player_a: Updateable<Results> = {
-				final: 'TIE',
+				final: 'DRAW',
 				score: selected_match.player_a_score
 			};
 
 			const player_b: Updateable<Results> = {
-				final: 'TIE',
+				final: 'DRAW',
 				score: selected_match.player_b_score
 			};
 

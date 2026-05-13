@@ -19,7 +19,7 @@ echo "Connect and setup $DB_NAME auth tables..."
 psql -U "$POSTGRES_USER" -d "$DB_NAME" <<EOSQL
 
 CREATE TYPE roles AS ENUM ('Admin','Moderator','Creator','User');
-CREATE TYPE match_status AS ENUM ('WIN','LOSE','TIE');
+CREATE TYPE match_status AS ENUM ('WIN','LOSE','DRAW');
 CREATE TYPE entry_status AS ENUM ('DROP','ACTIVE','CUT');
 CREATE TYPE tournament_status AS ENUM ('TBD','Set','Running','Complete');
 
@@ -73,7 +73,7 @@ CREATE TABLE results (
     match TEXT NOT NULL REFERENCES matches(id),
     player TEXT NOT NULL REFERENCES auth_user(id),
     score INTEGER NOT NULL DEFAULT 0,
-    final match_status NOT NULL DEFAULT 'TIE'
+    final match_status NOT NULL DEFAULT 'DRAW'
 );
 
 CREATE TABLE entry (

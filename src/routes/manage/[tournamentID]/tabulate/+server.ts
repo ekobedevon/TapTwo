@@ -39,7 +39,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				scores[results[index].player] = 0;
 			}
 
-			if (results[index].final == 'TIE') {
+			if (results[index].final == 'DRAW') {
 				scores[results[index].player] += 5; //.5 points for a tie scale for int
 			}
 			if (results[index].final == 'WIN') {
