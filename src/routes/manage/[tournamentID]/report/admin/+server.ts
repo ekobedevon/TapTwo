@@ -2,7 +2,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import { db } from 'db';
 import type { Insertable, Updateable } from 'kysely';
-import type { Results } from 'lib/db';
+import type { Matches, Results } from 'lib/db';
 
 export const POST = async (event: RequestEvent): Promise<Response> => {
 	if (!event.locals.user || !event.params.tournamentID || !event.url.searchParams.get('match'))
@@ -38,6 +38,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 		console.log(body);
 		let { selected_match } = body;
 		selected_match.finished = true;
+
 		await db
 			.updateTable('matches')
 			.set({ finished: true })
@@ -45,6 +46,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 			.execute();
 
 		if (selected_match.player_a_score === selected_match.player_b_score) {
+			console.log('DRAW');
 			const player_a: Updateable<Results> = {
 				final: 'DRAW',
 				score: selected_match.player_a_score
@@ -59,48 +61,50 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				.updateTable('results')
 				.set(player_a)
 				.where('results.player', '=', selected_match.a)
-				.where('match', '=', selected_match.id);
+				.where('match', '=', selected_match.id)
+				.execute();
 			await db
 				.updateTable('results')
 				.set(player_b)
 				.where('results.player', '=', selected_match.b)
-				.where('match', '=', selected_match.id);
+				.where('match', '=', selected_match.id)
+				.execute();
 
 			return Promise.resolve(
 				new Response(JSON.stringify({ message: 'Score Updated' }), {
 					status: 200
 				})
 			);
+		} else {
+			console.log('WINNER');
+			const winner_id =
+				selected_match.player_a_score > selected_match.player_b_score
+					? selected_match.a
+					: selected_match.b;
+
+			const player_a: Updateable<Results> = {
+				final: winner_id === selected_match.a ? 'WIN' : 'LOSE',
+				score: selected_match.player_a_score
+			};
+
+			const player_b: Updateable<Results> = {
+				final: winner_id === selected_match.b ? 'WIN' : 'LOSE',
+				score: selected_match.player_b_score
+			};
+
+			await db
+				.updateTable('results')
+				.set(player_a)
+				.where('results.player', '=', selected_match.a)
+				.where('match', '=', selected_match.id)
+				.execute();
+			await db
+				.updateTable('results')
+				.set(player_b)
+				.where('results.player', '=', selected_match.b)
+				.where('match', '=', selected_match.id)
+				.execute();
 		}
-		const winner_id =
-			selected_match.player_a_score > selected_match.player_b_score
-				? selected_match.a
-				: selected_match.b;
-
-		const player_a: Updateable<Results> = {
-			final: winner_id === selected_match.a ? 'WIN' : 'LOSE',
-			score: selected_match.player_a_score
-		};
-
-		const player_b: Updateable<Results> = {
-			final: winner_id === selected_match.b ? 'WIN' : 'LOSE',
-			score: selected_match.player_b_score
-		};
-
-		await db
-			.updateTable('results')
-			.set(player_a)
-			.where('results.player', '=', selected_match.a)
-			.where('match', '=', selected_match.id)
-			.execute();
-		await db
-			.updateTable('results')
-			.set(player_b)
-			.where('results.player', '=', selected_match.b)
-			.where('match', '=', selected_match.id)
-			.execute();
-
-		console.log('DONE');
 	}
 
 	return Promise.resolve(
