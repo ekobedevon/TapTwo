@@ -22,9 +22,8 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 
 	if (tournament) {
 		//Start the First Round
+		const newRound = tournament.rounds + 1;
 		if (tournament.rounds === 0) {
-			const newRound = tournament.rounds + 1;
-
 			let players = await db
 				.selectFrom('entry')
 				.innerJoin('auth_user', 'auth_user.id', 'entry.player')
@@ -97,6 +96,86 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				.execute();
 			let matches: Insertable<Matches>[] = [];
 			let results: Insertable<Results>[] = [];
+			//If there is an uneven amount of players
+			if (players.length % 2 === 1) {
+				let index = players.length - 1;
+				while (players.length % 2 == 1) {
+					const byes = await db
+						.selectFrom('matches')
+						.where('tournament_id', '=', tournament.id)
+						.where('a', '=', players[index].id)
+						.where('b', '=', players[index].id)
+						.executeTakeFirst();
+					// if the player has no previous bye rounds then then get the bye
+					if (!byes) {
+						const match_id = nanoid();
+						const bye_player = players[index].id;
+						matches.push({
+							id: match_id,
+							a: bye_player,
+							b: bye_player,
+							tournament_id: tournament.id,
+							round: newRound
+						});
+						players.splice(index, 1); // remove from array so that its even
+						results.push({
+							player: bye_player,
+							final: 'WIN',
+							match: match_id,
+							score: 0,
+							id: nanoid()
+						});
+					}
+				}
+			}
+
+			let carry:
+				| {
+						id: string;
+						points: number;
+				  }
+				| undefined = undefined;
+			for (let ranking = players[0].points; ranking >= 0; ranking--) {
+				let rank: {
+					id: string;
+					points: number;
+				}[] = [];
+				if (carry) {
+					rank.push(carry);
+					carry = undefined;
+				}
+				//Starting from the players with the most points make a list
+				for (let index = players.length - 1; index >= 0; index--) {
+					//If of this rank add to this list
+					if (players[index].points === ranking) {
+						rank.push(players[index]);
+						players.splice(index, 1);
+					}
+				}
+				//If there is an un even amount of people
+				if (rank.length % 2 === 1) {
+					carry = rank.pop(); // remove bottom ranked from the group
+				}
+				//pair off
+				const offset = rank.length / 2;
+				for (let index = 0; index < offset; index++) {
+					const match_id = nanoid();
+					const a = rank[index + offset].id;
+					const b = rank[index].id;
+
+					matches.push({ id: match_id, a, b, tournament_id: tournament.id, round: newRound });
+					results.push(
+						{
+							player: a,
+							final: 'DRAW',
+							match: match_id,
+							score: 0,
+							id: nanoid()
+						},
+						{ player: b, final: 'DRAW', match: match_id, score: 0, id: nanoid() }
+					);
+				}
+			}
 		}
 	}
 
