@@ -5,7 +5,7 @@
 
 import type { ColumnType } from "kysely";
 
-export type EntryStatus = "ACTIVE" | "CUT" | "DROP";
+export type EntryStatus = "ACTIVE" | "CUT" | "DQ" | "DROP";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>

@@ -20,7 +20,7 @@ psql -U "$POSTGRES_USER" -d "$DB_NAME" <<EOSQL
 
 CREATE TYPE roles AS ENUM ('Admin','Moderator','Creator','User');
 CREATE TYPE match_status AS ENUM ('WIN','LOSE','DRAW');
-CREATE TYPE entry_status AS ENUM ('DROP','ACTIVE','CUT');
+CREATE TYPE entry_status AS ENUM ('DROP','ACTIVE','CUT','DQ');
 CREATE TYPE tournament_status AS ENUM ('TBD','Set','Running','Complete');
 
 CREATE TABLE auth_user (

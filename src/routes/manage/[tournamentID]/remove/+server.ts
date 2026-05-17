@@ -29,32 +29,22 @@ export const DELETE = async (event: RequestEvent): Promise<Response> => {
 			})
 		);
 	}
-
-	const entry = await db
-		.deleteFrom('entry')
-		.where('entry.tournament', '=', tournament.id)
-		.where('entry.player', '=', body.userID)
-		.executeTakeFirst();
-	// const entries = await db
-	// 	.selectFrom('entry')
-	// 	.innerJoin('auth_user', 'auth_user.id', 'entry.user_id')
-	// 	.select(['auth_user.id', 'auth_user.username'])
-	// 	.execute();
-
-	// if (!entries.length) {
-	// 	return Promise.resolve(
-	// 		new Response(JSON.stringify({ message: 'Failed to retrieve list' }), {
-	// 			status: 500
-	// 		})
-	// 	);
-	// }
-
-	// console.log(entries);
-	// return Promise.resolve(
-	// 	new Response(JSON.stringify({ entries }), {
-	// 		status: 200
-	// 	})
-	// );
+	//if tournament hasn't started, player can be removed, otherwise they are dropped
+	if (tournament.rounds === 0) {
+		const entry = await db
+			.deleteFrom('entry')
+			.where('entry.tournament', '=', tournament.id)
+			.where('entry.player', '=', body.userID)
+			.executeTakeFirst();
+	} else {
+		const entry = await db
+			.updateTable('entry')
+			.set({ status: 'DROP' })
+			.where('entry.tournament', '=', tournament.id)
+			.where('entry.player', '=', body.userID)
+			.executeTakeFirst();
+	}
+	
 
 	return Promise.resolve(
 		new Response(JSON.stringify({ message: 'Player Deleted' }), {

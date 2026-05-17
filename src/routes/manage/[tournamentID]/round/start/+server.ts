@@ -28,7 +28,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				.selectFrom('entry')
 				.innerJoin('auth_user', 'auth_user.id', 'entry.player')
 				.select('auth_user.id')
-				.where('entry.tournament', '=', tournament.id)
+				.where('entry.status', '=', 'ACTIVE')
 				.execute();
 			let matches: Insertable<Matches>[] = [];
 			let results: Insertable<Results>[] = [];
@@ -91,6 +91,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				.selectFrom('entry')
 				.innerJoin('auth_user', 'auth_user.id', 'entry.player')
 				.select(['auth_user.id', 'entry.points'])
+				.where('entry.status', '=', 'ACTIVE')
 				.where('entry.tournament', '=', tournament.id)
 				.orderBy('points', 'desc')
 				.execute();
