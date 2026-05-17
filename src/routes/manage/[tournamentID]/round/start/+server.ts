@@ -176,6 +176,9 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 					);
 				}
 			}
+			await db.insertInto('matches').values(matches).execute();
+			await db.updateTable('tournament').set({ rounds: newRound }).execute();
+			await db.insertInto('results').values(results).execute();
 		}
 	}
 
