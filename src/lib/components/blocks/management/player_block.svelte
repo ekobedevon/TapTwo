@@ -126,7 +126,7 @@
 					<tr>
 						<td>{player.username}</td>
 						<td class="text-center">{player.wins}-{player.loses}-{player.ties}</td>
-						<td class="text-center">{player.points}</td>
+						<td class="text-center">{player.points || 0}</td>
 						<td class="text-center">
 							<button
 								class="text-red-600 hover:font-bold hover:underline"

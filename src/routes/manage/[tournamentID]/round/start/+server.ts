@@ -20,11 +20,11 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 		.where('organizer_id', '=', event.locals.user.id)
 		.executeTakeFirst();
 
-	console.log(tournament);
-
 	if (tournament) {
 		//Start the First Round
 		if (tournament.rounds === 0) {
+			const newRound = tournament.rounds + 1;
+
 			let players = await db
 				.selectFrom('entry')
 				.innerJoin('auth_user', 'auth_user.id', 'entry.player')
@@ -39,13 +39,19 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				let random = Math.floor(Math.random() * players.length);
 				const bye_player = players[random].id;
 				const match_id = nanoid();
-				matches.push({ id: match_id, a: bye_player, b: bye_player, tournament_id: tournament.id });
+				matches.push({
+					id: match_id,
+					a: bye_player,
+					b: bye_player,
+					tournament_id: tournament.id,
+					round: newRound
+				});
 				players.splice(random, 1);
 				results.push({
 					player: bye_player,
 					final: 'WIN',
 					match: match_id,
-					score: 1,
+					score: 0,
 					id: nanoid()
 				});
 			}
@@ -59,7 +65,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				const b = players[random].id;
 				const match_id = nanoid();
 				players.splice(random, 1);
-				matches.push({ id: match_id, a, b, tournament_id: tournament.id });
+				matches.push({ id: match_id, a, b, tournament_id: tournament.id, round: newRound });
 				results.push(
 					{
 						player: a,
@@ -73,7 +79,7 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 			}
 
 			await db.insertInto('matches').values(matches).execute();
-			await db.updateTable('tournament').set({ rounds: 1 }).execute();
+			await db.updateTable('tournament').set({ rounds: newRound }).execute();
 			await db.insertInto('results').values(results).execute();
 
 			return Promise.resolve(
@@ -81,6 +87,16 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 					status: 200
 				})
 			);
+		} else {
+			let players = await db
+				.selectFrom('entry')
+				.innerJoin('auth_user', 'auth_user.id', 'entry.player')
+				.select(['auth_user.id', 'entry.points'])
+				.where('entry.tournament', '=', tournament.id)
+				.orderBy('points', 'desc')
+				.execute();
+			let matches: Insertable<Matches>[] = [];
+			let results: Insertable<Results>[] = [];
 		}
 	}
 

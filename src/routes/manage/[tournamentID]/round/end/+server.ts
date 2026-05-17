@@ -1,6 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import { db } from 'db';
+import { eventNames } from 'process';
 
 export const POST = async (event: RequestEvent): Promise<Response> => {
 	if (!event.locals.user || !event.params.tournamentID) redirect(302, '/');
@@ -38,6 +39,45 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 				status: 500
 			}
 		)
+	);
+};
+
+export const GET = async (event: RequestEvent): Promise<Response> => {
+	const tournamentID: string = event.params.tournamentID || '';
+
+	const tournament = await db
+		.selectFrom('tournament')
+		.where('id', '=', tournamentID)
+		.select(['tournament.rounds', 'tournament.id'])
+		.executeTakeFirst();
+
+	if (tournament) {
+		const unfinishedMatches = await db
+			.selectFrom('matches')
+			.where('matches.tournament_id', '=', tournament.id)
+			.where('matches.round', '=', tournament.rounds)
+			.where('matches.finished', '=', false)
+			.execute();
+
+		if (unfinishedMatches.length !== 0) {
+			return Promise.resolve(
+				new Response(JSON.stringify({ message: 'Round is Finished', finished: true }), {
+					status: 200
+				})
+			);
+		} else {
+			return Promise.resolve(
+				new Response(JSON.stringify({ message: 'Round is Ongoing', finished: false }), {
+					status: 200
+				})
+			);
+		}
+	}
+
+	return Promise.resolve(
+		new Response(JSON.stringify({ message: 'Failed retrieve tournament status' }), {
+			status: 500
+		})
 	);
 };
 

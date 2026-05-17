@@ -24,13 +24,14 @@
 
 	const endRound = async () => {
 		try {
-			const response = await fetch(`/manage/${tournament.id}/round/status`, {
-				method: 'POST',
+			const response = await fetch(`/manage/${tournament.id}/round/end`, {
+				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({})
+				}
 			});
+
+
 			if (response.ok) {
 				const { active }: { active: boolean } = await response.json();
 				if (active && showEndRoundModal != true) {

@@ -36,14 +36,14 @@ export const POST = async (event: RequestEvent): Promise<Response> => {
 
 		for (let index = 0; index < results.length; index++) {
 			if (scores[results[index].player] == undefined) {
-				scores[results[index].player] = 0;
+				scores[results[index].player] = 0; //if not initialized
 			}
 
 			if (results[index].final == 'DRAW') {
-				scores[results[index].player] += 5; //.5 points for a tie scale for int
+				scores[results[index].player] += 1; // mtg swiss
 			}
 			if (results[index].final == 'WIN') {
-				scores[results[index].player] += 10; //.5 points for a tie scale for int
+				scores[results[index].player] += 3; // mtg swiss
 			}
 		}
 		console.log(scores);

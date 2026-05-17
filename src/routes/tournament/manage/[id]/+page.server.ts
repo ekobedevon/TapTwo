@@ -8,12 +8,13 @@ import { db } from 'db';
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) redirect(302, '/');
 	const tournamentID = event.params.id;
+
 	const tournament = await db
 		.selectFrom('tournament')
 		.selectAll()
 		.where('id', '=', tournamentID)
 		.executeTakeFirstOrThrow();
-
+	
 	const organizer = await db
 		.selectFrom('auth_user')
 		.select('auth_user.username')
@@ -23,6 +24,7 @@ export const load: PageServerLoad = async (event) => {
 	const players = await db
 		.selectFrom('entry')
 		.innerJoin('auth_user', 'auth_user.id', 'entry.player')
+		.where('entry.tournament', '=', tournament.id)
 		.select(['auth_user.id', 'auth_user.username', 'wins', 'loses', 'ties', 'points'])
 		.orderBy('entry.points', 'desc')
 		.execute();
@@ -53,12 +55,15 @@ export const load: PageServerLoad = async (event) => {
 			'opponent.username as player_b',
 
 			'results.score as player_a_score',
-			'b_results.score as player_b_score'
+			'b_results.score as player_b_score',
+			'matches.round'
 		])
 
 		.where('matches.tournament_id', '=', tournamentID)
 		.where('matches.round', '=', tournament.rounds)
 		.execute();
+
+		
 
 	const activeMatches = await db
 		.selectFrom('matches')
