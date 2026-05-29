@@ -74,6 +74,21 @@
 		}
 	};
 
+	const CutToTop = async (cut:number) => {
+		try {
+			const response = await fetch(
+				`/manage/${tournament.id}/cut`,
+				{
+					method: 'POST',
+					body: JSON.stringify({ cut})
+				}
+			);
+			showChangeScoreModal = false;
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	};
+
 	const confirmModifyScore = async (matchIndex: number) => {
 		selected_match = matches[matchIndex];
 		showChangeScoreModal = true;
@@ -84,7 +99,7 @@
 	<!-- Start will turn into pause once round is started -->
 	{#if !active}
 		<button class="border-2 p-1" onclick={newRound}>Start Round</button>
-		<button class="border-2 p-1">Cut to Top</button>
+		<button class="border-2 p-1" onclick={()=>CutToTop(4)}>Cut to Top</button>
 	{:else}
 		<button class="border-2 p-1" onclick={() => console.log('PAUSE')}>Pause Round</button>
 		<button class="border-2 p-1" onclick={endRound}>End Round</button>

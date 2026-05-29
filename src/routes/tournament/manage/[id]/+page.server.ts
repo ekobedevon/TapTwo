@@ -25,7 +25,7 @@ export const load: PageServerLoad = async (event) => {
 		.selectFrom('entry')
 		.innerJoin('auth_user', 'auth_user.id', 'entry.player')
 		.where('entry.tournament', '=', tournament.id)
-		.select(['auth_user.id', 'auth_user.username', 'wins', 'loses', 'ties', 'points'])
+		.select(['auth_user.id', 'auth_user.username', 'wins', 'loses', 'ties', 'points','entry.status'])
 		.orderBy('entry.points', 'desc')
 		.execute();
 

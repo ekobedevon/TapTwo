@@ -31,4 +31,5 @@ export interface player {
 	loses: number;
 	ties: number;
 	points: number;
+	status: string;
 }

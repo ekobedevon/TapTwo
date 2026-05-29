@@ -17,7 +17,8 @@
 		ties: 0,
 		username: '',
 		id: '',
-		points: 0
+		points: 0,
+		status: 'ACTIVE'
 	};
 	let selected_player: player = $state(sample_player);
 
@@ -79,12 +80,12 @@
 
 	const removePlayer = async (userID: string) => {
 		try {
-			const response = await fetch(`/manage/${tournamentID}/remove`, {
+			const response = await fetch(`/manage/${tournamentID}/remove?userID=${userID}` , {
 				method: 'Delete',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ userID })
+				body: JSON.stringify({ userID:userID })
 			});
 			if (!response.ok) {
 				toast.error('Issue removing player, please try again in a moment.');
@@ -128,10 +129,14 @@
 						<td class="text-center">{player.wins}-{player.loses}-{player.ties}</td>
 						<td class="text-center">{player.points || 0}</td>
 						<td class="text-center">
-							<button
-								class="text-red-600 hover:font-bold hover:underline"
-								onclick={() => confirmRemoval(player)}>X</button
-							></td
+							{#if player.status === 'ACTIVE'}
+								<button
+									class="text-red-600 hover:font-bold hover:underline"
+									onclick={() => confirmRemoval(player)}>X</button
+								>
+							{:else}
+								<p>{player.status}</p>
+							{/if}</td
 						>
 					</tr>
 				{/each}

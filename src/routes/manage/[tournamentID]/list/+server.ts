@@ -8,7 +8,7 @@ export const GET = async (event: RequestEvent): Promise<Response> => {
 		.selectFrom('entry')
 		.innerJoin('auth_user', 'auth_user.id', 'entry.player')
 		.where('entry.tournament', '=', tournamentID)
-		.select(['auth_user.id', 'auth_user.username', 'wins', 'loses', 'ties', 'points'])
+		.select(['auth_user.id', 'auth_user.username', 'wins', 'loses', 'ties', 'points','status'])
 		.orderBy('entry.points', 'desc')
 		.execute();
 
