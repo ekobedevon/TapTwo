@@ -21,6 +21,7 @@ export const actions: Actions = {
 			format,
 			game,
 			title,
+			rounds: 0,
 			location: '',
 			organizer_id: userId,
 			id: nanoid(),
@@ -32,8 +33,7 @@ export const actions: Actions = {
 			.values(newTourney)
 			.returning('id')
 			.executeTakeFirst();
-		console.log('RESPONSE');
-		console.log(response);
+		
 		// setSessionTokenCookie(event, token, session.expires_at);
 		if (response?.id) {
 			return redirect(302, `/tournament/manage/${response?.id}`);

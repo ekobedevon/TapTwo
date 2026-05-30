@@ -6,16 +6,21 @@ if [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_DB" ] || [ -z "$DB_NAME" ]; then
 fi
 
 echo "Creating the $DB_NAME database with $POSTGRES_USER..."
+
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE DATABASE \"$DB_NAME\";"
+
 if [ $? -ne 0 ]; then
     echo "Failed to create $DB_NAME database."
     exit 1
 fi
 
 echo "Connect and setup $DB_NAME auth tables..."
+
 psql -U "$POSTGRES_USER" -d "$DB_NAME" <<EOSQL
 
 CREATE TYPE roles AS ENUM ('Admin','Moderator','Creator','User');
+CREATE TYPE match_status AS ENUM ('WIN','LOSE','DRAW');
+CREATE TYPE entry_status AS ENUM ('DROP','ACTIVE','CUT','DQ');
 CREATE TYPE tournament_status AS ENUM ('TBD','Set','Running','Complete');
 
 CREATE TABLE auth_user (
@@ -50,29 +55,37 @@ CREATE TABLE tournament (
     game TEXT NOT NULL,
     format TEXT NOT NULL,
     date TIMESTAMP NOT NULL,
-    rounds INTEGER NOT NULL DEFAULT 1,
+    rounds INTEGER NOT NULL DEFAULT 0,
     status tournament_status NOT NULL DEFAULT 'TBD'
 );
 
-CREATE TABLE match (
+CREATE TABLE matches (
     id TEXT PRIMARY KEY,
     tournament_id TEXT NOT NULL REFERENCES tournament(id),
-    a_id TEXT NOT NULL REFERENCES auth_user(id),
-    b_id TEXT NOT NULL REFERENCES auth_user(id),
-    game TEXT NOT NULL,
-    format TEXT NOT NULL,
-    date TIMESTAMP NOT NULL,
-    a_score INTEGER NOT NULL DEFAULT 0,
-    b_score INTEGER NOT NULL DEFAULT 0
+    a TEXT NOT NULL REFERENCES auth_user(id),
+    b TEXT NOT NULL REFERENCES auth_user(id),
+    round INTEGER NOT NULL DEFAULT 1,
+    finished BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE results (
+    id TEXT PRIMARY KEY,
+    match TEXT NOT NULL REFERENCES matches(id),
+    player TEXT NOT NULL REFERENCES auth_user(id),
+    score INTEGER NOT NULL DEFAULT 0,
+    final match_status NOT NULL DEFAULT 'DRAW'
 );
 
 CREATE TABLE entry (
-    id SERIAL PRIMARY KEY,
-    tournament_id TEXT NOT NULL REFERENCES tournament(id),
-    user_id TEXT NOT NULL REFERENCES auth_user(id)
+    tournament TEXT NOT NULL REFERENCES tournament(id),
+    player TEXT NOT NULL REFERENCES auth_user(id),
+    wins INTEGER NOT NULL DEFAULT 0,
+    loses INTEGER NOT NULL DEFAULT 0,
+    ties INTEGER NOT NULL DEFAULT 0,
+    points INTEGER NOT NULL DEFAULT 0,
+    status entry_status NOT NULL DEFAULT 'ACTIVE',
+    PRIMARY KEY (tournament,player)
 );
-
-
 
 EOSQL
 
@@ -84,6 +97,7 @@ else
 fi
 
 psql -U "$POSTGRES_USER" -c "ALTER USER \"$POSTGRES_USER\" WITH PASSWORD '$POSTGRES_PASSWORD';"
+
 if [ $? -eq 0 ]; then
     echo "Password for $POSTGRES_USER changed successfully."
 else

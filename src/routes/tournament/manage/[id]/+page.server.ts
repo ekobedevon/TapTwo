@@ -8,15 +8,77 @@ import { db } from 'db';
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) redirect(302, '/');
 	const tournamentID = event.params.id;
+
 	const tournament = await db
 		.selectFrom('tournament')
 		.selectAll()
 		.where('id', '=', tournamentID)
+		.executeTakeFirstOrThrow();
+	
+	const organizer = await db
+		.selectFrom('auth_user')
+		.select('auth_user.username')
+		.where('id', '=', tournament.organizer_id)
+		.executeTakeFirstOrThrow();
+
+	const players = await db
+		.selectFrom('entry')
+		.innerJoin('auth_user', 'auth_user.id', 'entry.player')
+		.where('entry.tournament', '=', tournament.id)
+		.select(['auth_user.id', 'auth_user.username', 'wins', 'loses', 'ties', 'points','entry.status'])
+		.orderBy('entry.points', 'desc')
+		.execute();
+
+	const matches = await db
+		.selectFrom('matches')
+		.innerJoin('auth_user as user', 'user.id', 'matches.a')
+		.innerJoin('auth_user as opponent', 'opponent.id', 'matches.b')
+
+		// player A result
+		.innerJoin('results', (join) =>
+			join.onRef('results.match', '=', 'matches.id').onRef('results.player', '=', 'matches.a')
+		)
+
+		// player B result
+		.innerJoin('results as b_results', (join) =>
+			join.onRef('b_results.match', '=', 'matches.id').onRef('b_results.player', '=', 'matches.b')
+		)
+
+		.select([
+			'matches.id',
+			'matches.finished',
+
+			'matches.a',
+			'matches.b',
+
+			'user.username as player_a',
+			'opponent.username as player_b',
+
+			'results.score as player_a_score',
+			'b_results.score as player_b_score',
+			'matches.round'
+		])
+
+		.where('matches.tournament_id', '=', tournamentID)
+		.where('matches.round', '=', tournament.rounds)
+		.execute();
+
+		
+
+	const activeMatches = await db
+		.selectFrom('matches')
+		.where('matches.tournament_id', '=', tournamentID)
+		.where('matches.round', '=', tournament.rounds)
+		.where('matches.finished', '=', false)
 		.execute();
 
 	return {
-		tournament
-	}
+		tournament,
+		organizer: organizer.username,
+		matches,
+		players,
+		active: activeMatches.length !== 0
+	};
 };
 // export const actions: Actions = {
 // 	default: async (event) => {

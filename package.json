@@ -13,9 +13,9 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"db": "sudo docker compose up avon-db",
-		"d-b": "sudo docker-compose up avon-db",
 		"down": "sudo docker compose down -v",
-		"db_codegen": "npx kysely-codegen --out-file ./src/lib/db.d.ts"
+		"db_codegen": "npx kysely-codegen --out-file ./src/lib/db.d.ts",
+		"tourney_gen": "npx tsx src/lib/gen/tournament.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.2",
@@ -47,13 +47,13 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@tailwindplus/elements": "^1.0.22",
 		"argon2": "^0.44.0",
+		"dotenv": "^17.4.2",
 		"kysely": "^0.28.11",
 		"kysely-codegen": "^0.20.0",
 		"nanoid": "^5.1.11",
 		"pg": "^8.19.0",
 		"random-words": "^2.0.1",
-		"svelte-sonner": "^1.0.7",
-		"tsx": "^4.21.0"
+		"svelte-sonner": "^1.1.1"
 	},
 	"engines": {
 		"node": "^22.13 "

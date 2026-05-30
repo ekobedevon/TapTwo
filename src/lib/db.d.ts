@@ -5,9 +5,13 @@
 
 import type { ColumnType } from "kysely";
 
+export type EntryStatus = "ACTIVE" | "CUT" | "DQ" | "DROP";
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
+
+export type MatchStatus = "DRAW" | "LOSE" | "WIN";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
@@ -31,21 +35,30 @@ export interface EmailVerificationRequest {
 }
 
 export interface Entry {
-  id: Generated<number>;
-  tournament_id: string;
-  user_id: string;
+  loses: Generated<number>;
+  player: string;
+  points: Generated<number>;
+  status: Generated<EntryStatus>;
+  ties: Generated<number>;
+  tournament: string;
+  wins: Generated<number>;
 }
 
-export interface Match {
-  a_id: string;
-  a_score: Generated<number>;
-  b_id: string;
-  b_score: Generated<number>;
-  date: Timestamp;
-  format: string;
-  game: string;
+export interface Matches {
+  a: string;
+  b: string;
+  finished: Generated<boolean>;
   id: string;
+  round: Generated<number>;
   tournament_id: string;
+}
+
+export interface Results {
+  final: Generated<MatchStatus>;
+  id: string;
+  match: string;
+  player: string;
+  score: Generated<number>;
 }
 
 export interface Tournament {
@@ -71,7 +84,8 @@ export interface DB {
   auth_user: AuthUser;
   email_verification_request: EmailVerificationRequest;
   entry: Entry;
-  match: Match;
+  matches: Matches;
+  results: Results;
   tournament: Tournament;
   user_session: UserSession;
 }

@@ -4,12 +4,17 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { PostgresDialect, Kysely, type SelectType, type Insertable } from 'kysely';
 import pg from 'pg';
-import type { AuthUser, DB } from 'lib/db';
+import type { AuthUser, DB, Entry } from 'lib/db';
 import { customAlphabet } from 'nanoid';
 
 // Load env file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const args = process.argv.slice(2);
+
+const amount = Number(args[0]);
+const tournament = args[1];
 
 const envPath = path.resolve(__dirname, '../../../.env');
 dotenv.config({ path: envPath, override: true });
@@ -30,13 +35,13 @@ export const gen_db = new Kysely<DB>({
 	dialect
 });
 
-console.log('making new users');
+console.log('Making new users');
 let newUsers: Insertable<AuthUser>[] = [];
 
 const alphabet = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nanoid = customAlphabet(alphabet, 10);
 
-for (let index = 0; index < 10; index++) {
+for (let index = 0; index < amount; index++) {
 	const hashed_password = await argon2.hash('password');
 
 	const id = nanoid();
@@ -51,8 +56,12 @@ for (let index = 0; index < 10; index++) {
 }
 
 const user_ids = await gen_db.insertInto('auth_user').values(newUsers).returning('id').execute();
+let entries: Insertable<Entry>[] = [];
+for (let index = 0; index < amount; index++) {
+	entries.push({ tournament, player: user_ids[index].id });
+}
 
-console.log(user_ids);
+await gen_db.insertInto('entry').values(entries).execute();
 
 await gen_db.destroy();
 process.exit(0);
