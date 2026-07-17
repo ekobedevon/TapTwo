@@ -4,32 +4,31 @@
 	import Logo from '$lib/components/icons/logo.svelte';
 	let password: string;
 	let repeat: string;
-	let email:string = "";
+	let email: string;
 	//import Warning from '$src/lib/components/modals/alerts/warning.svelte';
 	let matching: boolean = $state(true);
-	let validEmail: boolean = $state(true)
+	let validEmail: boolean = $state(true);
 
 	var timeout: any;
 
 	const checkMatch = async () => {
-		
 		if (password === repeat) matching = true;
 		else matching = false;
 	};
 	const checkEmail = async () => {
 		console.log('Check Email');
-		if(typeof email !== 'string' ||
+		if (
+			typeof email !== 'string' ||
 			email.length < 3 ||
 			email.length > 60 ||
-			!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email.toLowerCase()))
-			{
-				validEmail = false
-			}
-		else{
-			validEmail = true
+			!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email.toLowerCase())
+		) {
+			validEmail = false;
+		} else {
+			validEmail = true;
 		}
-		console.log(validEmail)
-	}
+		console.log(validEmail);
+	};
 
 	const keyCheck = async () => {
 		if (repeat) {
