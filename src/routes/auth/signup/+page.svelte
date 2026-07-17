@@ -2,7 +2,43 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Logo from '$lib/components/icons/logo.svelte';
+	let password: string;
+	let repeat: string;
+	let email:string = "";
 	//import Warning from '$src/lib/components/modals/alerts/warning.svelte';
+	let matching: boolean = $state(true);
+	let validEmail: boolean = $state(true)
+
+	var timeout: any;
+
+	const checkMatch = async () => {
+		
+		if (password === repeat) matching = true;
+		else matching = false;
+	};
+	const checkEmail = async () => {
+		console.log('Check Email');
+		if(typeof email !== 'string' ||
+			email.length < 3 ||
+			email.length > 60 ||
+			!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email.toLowerCase()))
+			{
+				validEmail = false
+			}
+		else{
+			validEmail = true
+		}
+		console.log(validEmail)
+	}
+
+	const keyCheck = async () => {
+		if (repeat) {
+			clearTimeout(timeout);
+			timeout = setTimeout(checkMatch, 500);
+		} else {
+			timeout = setTimeout(checkMatch, 500);
+		}
+	};
 </script>
 
 <div class="flex min-h-full w-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
@@ -12,6 +48,12 @@
 			<h2 class="mt-10 text-center text-2xl leading-9 font-bold tracking-tight text-gray-900">
 				Create a new account
 			</h2>
+			{#if !validEmail}
+				<p class="text-xs font-bold text-red-600 italic opacity-70">Invalid Email</p>
+			{/if}
+			{#if !matching}
+				<p class="text-xs font-bold text-red-600 italic opacity-70">Password must match</p>
+			{/if}
 		</div>
 		<form use:enhance class="space-y-6" action="#" method="POST">
 			<div class="relative -space-y-px rounded-md shadow-sm">
@@ -27,7 +69,9 @@
 						autocomplete="email"
 						required
 						class="relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-100 ring-inset placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-primary focus:ring-inset sm:text-sm sm:leading-6"
-						placeholder="email"
+						placeholder="Email"
+						bind:value={email}
+						onchange={checkEmail}
 					/>
 				</div>
 				<div>
@@ -40,6 +84,21 @@
 						required
 						class="relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-100 ring-inset placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-primary focus:ring-inset sm:text-sm sm:leading-6"
 						placeholder="Password"
+						bind:value={password}
+					/>
+				</div>
+				<div>
+					<label for="repeatpassword" class="sr-only">Password</label>
+					<input
+						id="repeatpassword"
+						name="repeatpassword"
+						type="password"
+						autocomplete="current-password"
+						required
+						class="relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-gray-100 ring-inset placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-primary focus:ring-inset sm:text-sm sm:leading-6"
+						placeholder="Repeat Password"
+						bind:value={repeat}
+						onchange={keyCheck}
 					/>
 				</div>
 			</div>
