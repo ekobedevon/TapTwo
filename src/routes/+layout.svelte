@@ -9,10 +9,10 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<div class="flex w-full flex-col items-center">
+<div class="flex w-full flex-col items-center relative">
 	<Toaster expand={true} position={'top-right'} richColors />
 	<Navbar {user}></Navbar>
-	<div class="w-full max-w-350 flex-1">
+	<div class="w-full max-w-350 flex-1 px-4 md:px-0">
 		{@render children()}
 	</div>
 </div>

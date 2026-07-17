@@ -2,8 +2,8 @@
 	import User from './icons/user.svelte';
 	//export let user:any = null;
 	let { user }: { user: any } = $props();
-	let show_profile = false;
-	let show_mobile = false;
+	let show_profile = $state(false);
+	let show_mobile = $state(false);
 	let current = 'Home';
 	let options = [
 		{ title: 'Home', path: '/' },
@@ -14,14 +14,14 @@
 
 <!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> -->
-<nav class="relative w-full bg-background">
+<nav class="sticky w-full top-0 bg-background">
 	<div class="mx-auto max-w-350 flex-1 px-4 sm:px-6 lg:px-8">
 		<div class="flex h-16 justify-between">
 			<div class="flex">
 				<div class="mr-2 -ml-2 flex items-center md:hidden">
 					<!-- Mobile menu button -->
 					<button
-						onclick={() => (show_profile = !show_profile)}
+						onclick={() => (show_mobile = !show_mobile)}
 						class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 					>
 						<span class="absolute -inset-0.5"></span>
@@ -152,7 +152,7 @@
 	</div>
 	<!--------------MOBILE BAR-------------->
 	{#if show_mobile}
-		<div id="mobile-menu" class="block bg-background md:hidden">
+		<div id="mobile-menu" class="block bg-background md:hidden absolute w-full pt-2">
 			<div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
 				<!-- Current: "bg-gray-900 dark:bg-gray-950/50 text-white", Default: "text-gray-300 hover:bg-accent hover:text-primary" -->
 
@@ -174,52 +174,54 @@
 				{/each}
 				<!--  -->
 			</div>
-			<div class="border-t border-white/10 pt-4 pb-3">
-				<div class="flex items-center px-5 sm:px-6">
-					<div class="shrink-0">
-						<User classData="size-10 fill-primary border-2 rounded-full border-primary" />
-					</div>
-					<button
-						type="button"
-						class="text-body relative ml-auto shrink-0 rounded-full p-1 hover:text-primary focus:outline-2 focus:outline-offset-2 focus:outline-primary"
-					>
-						<span class="absolute -inset-1.5"></span>
-						<span class="sr-only">View notifications</span>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.5"
-							data-slot="icon"
-							aria-hidden="true"
-							class="size-6"
+			{#if user}
+				<div class="border-t border-white/10 pt-4 pb-3">
+					<div class="flex items-center px-5 sm:px-6">
+						<div class="shrink-0">
+							<User classData="size-10 fill-primary border-2 rounded-full border-primary" />
+						</div>
+						<button
+							type="button"
+							class="text-body relative ml-auto shrink-0 rounded-full p-1 hover:text-primary focus:outline-2 focus:outline-offset-2 focus:outline-primary"
 						>
-							<path
-								d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/>
-						</svg>
-					</button>
+							<span class="absolute -inset-1.5"></span>
+							<span class="sr-only">View notifications</span>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+								data-slot="icon"
+								aria-hidden="true"
+								class="size-6"
+							>
+								<path
+									d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+							</svg>
+						</button>
+					</div>
+					<div class="mt-3 space-y-1 px-2 sm:px-3">
+						<a
+							href="/"
+							class="text-body block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-text"
+							>Your profile</a
+						>
+						<a
+							href="/"
+							class="text-body block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-text"
+							>Settings</a
+						>
+						<a
+							href="/auth/signout"
+							class="text-body block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-text"
+							>Sign out</a
+						>
+					</div>
 				</div>
-				<div class="mt-3 space-y-1 px-2 sm:px-3">
-					<a
-						href="/"
-						class="text-body block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-text"
-						>Your profile</a
-					>
-					<a
-						href="/"
-						class="text-body block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-text"
-						>Settings</a
-					>
-					<a
-						href="/auth/signout"
-						class="text-body block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-text"
-						>Sign out</a
-					>
-				</div>
-			</div>
+			{/if}
 		</div>
 	{/if}
 </nav>
