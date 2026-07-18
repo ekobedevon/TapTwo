@@ -29,6 +29,7 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const email = formData.get('email');
 		const password = formData.get('password');
+		const repeatpassword = formData.get('repeatpassword');
 		console.log('USER ATTEMPTING TO SIGNUP');
 		// username must be between 4 ~ 31 characters, and only consists of lowercase letters, 0-9, -, and _
 		// keep in mind some database (e.g. mysql) are case insensitive
@@ -39,12 +40,17 @@ export const actions: Actions = {
 			!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email.toLowerCase())
 		) {
 			return fail(400, {
-				message: 'Invalid username'
+				message: 'Invalid email'
 			});
 		}
 		if (typeof password !== 'string' || password.length < 6 || password.length > 255) {
 			return fail(400, {
 				message: 'Invalid password'
+			});
+		}
+		if (password !== repeatpassword) {
+			return fail(400, {
+				message: 'Password do not match'
 			});
 		}
 

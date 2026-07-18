@@ -15,7 +15,8 @@
 		"db": "sudo docker compose up avon-db",
 		"down": "sudo docker compose down -v",
 		"db_codegen": "npx kysely-codegen --out-file ./src/lib/db.d.ts",
-		"tourney_gen": "npx tsx src/lib/gen/tournament.ts"
+		"tourney_gen": "npx tsx src/lib/gen/tournament.ts",
+		"populate": "npx tsx src/lib/gen/populate.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.2",
