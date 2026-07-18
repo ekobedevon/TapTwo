@@ -6,12 +6,11 @@ import { nanoid } from 'nanoid';
 import { db } from 'db';
 
 export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user) redirect(302, '/');
-	const tournaments = await db.selectFrom("tournament").selectAll().execute()
+	const tournaments = await db.selectFrom('tournament').selectAll().execute();
 
 	return {
 		tournaments
-	}
+	};
 };
 // export const actions: Actions = {
 // 	default: async (event) => {
